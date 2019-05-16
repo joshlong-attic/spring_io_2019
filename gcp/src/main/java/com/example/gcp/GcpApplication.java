@@ -12,13 +12,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.cloud.gcp.data.spanner.core.mapping.Table;
-import org.springframework.cloud.gcp.data.spanner.repository.SpannerRepository;
+import org.springframework.cloud.gcp.data.datastore.core.mapping.Entity;
+//import org.springframework.cloud.gcp.data.spanner.core.mapping.Table;
+//import org.springframework.cloud.gcp.data.spanner.repository.SpannerRepository;
 import org.springframework.cloud.gcp.pubsub.core.publisher.PubSubPublisherTemplate;
 import org.springframework.cloud.gcp.pubsub.core.subscriber.PubSubSubscriberTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
@@ -134,14 +137,16 @@ class SpannerDemo {
 
 }
 
-interface ReservationRepository extends SpannerRepository<Reservation, String> {
+interface ReservationRepository extends PagingAndSortingRepository<Reservation, String> {
 }
 
-@Table(name = "reservations")
+//@Table(name = "reservations")
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 class Reservation {
+	@Id
 	private String id;
 	private String name;
 }
