@@ -85,7 +85,8 @@ class VisionDemo {
 	private final CloudVisionTemplate visionTemplate;
 
 	VisionDemo(
-		@Value("gs://bootiful-cats/cat.jpg") Resource cat,
+		@Value("gs://bootiful/cat.jpg") Resource cat,
+		@Value("gs://bootiful/dog.jpg") Resource dog,
 		CloudVisionTemplate visionTemplate) {
 		this.resource = cat;
 		this.visionTemplate = visionTemplate;
