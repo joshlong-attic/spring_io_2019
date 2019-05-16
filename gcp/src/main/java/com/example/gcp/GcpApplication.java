@@ -1,6 +1,5 @@
 package com.example.gcp;
 
-import com.google.api.gax.core.CredentialsProvider;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
 import lombok.AllArgsConstructor;
@@ -17,6 +16,7 @@ import org.springframework.cloud.gcp.data.datastore.core.mapping.Entity;
 //import org.springframework.cloud.gcp.data.spanner.repository.SpannerRepository;
 import org.springframework.cloud.gcp.pubsub.core.publisher.PubSubPublisherTemplate;
 import org.springframework.cloud.gcp.pubsub.core.subscriber.PubSubSubscriberTemplate;
+import org.springframework.cloud.gcp.vision.CloudVisionTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
@@ -45,14 +45,6 @@ public class GcpApplication {
 	@Bean
 	RestTemplate restTemplate (){
 		return new RestTemplate();
-	}
-
-	@Bean
-	ImageAnnotatorClient imageAnnotatorClient(CredentialsProvider cp) throws Exception {
-		ImageAnnotatorSettings build = ImageAnnotatorSettings.newBuilder()
-			.setCredentialsProvider(cp)
-			.build();
-		return ImageAnnotatorClient.create(build);
 	}
 
 	public static void main(String[] args) {
@@ -90,31 +82,31 @@ class PubsubDemo {
 class VisionDemo {
 
 	private final Resource resource;
-	private final ImageAnnotatorClient imageAnnotatorClient;
+	private final CloudVisionTemplate visionTemplate;
 
 	VisionDemo(
-		@Value("gs://pgtm-jlong-bucket/cat.jpg") Resource cat,
-		ImageAnnotatorClient imageAnnotatorClient) {
+		@Value("gs://bootiful-cats/cat.jpg") Resource cat,
+		CloudVisionTemplate visionTemplate) {
 		this.resource = cat;
-		this.imageAnnotatorClient = imageAnnotatorClient;
+		this.visionTemplate = visionTemplate;
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void demo() throws Exception {
 
-		byte[] catBytes = FileCopyUtils
-			.copyToByteArray(this.resource.getInputStream());
 
-		AnnotateImageRequest build = AnnotateImageRequest
-			.newBuilder()
-			.addFeatures(Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION))
-			.setImage(Image.newBuilder().setContent(ByteString.copyFrom(catBytes)))
-			.build();
 
-		BatchAnnotateImagesResponse response =
-			this.imageAnnotatorClient.batchAnnotateImages(Collections.singletonList(build));
+		AnnotateImageResponse response = visionTemplate.analyzeImage(this.resource, Feature.Type.LABEL_DETECTION);
 
 		log.info(response);
+
+		boolean catnotcat = response.getLabelAnnotationsList().stream()
+			.anyMatch(entity ->
+				 entity.getDescription().equalsIgnoreCase("cat") &&
+					entity.getScore() >= 0.90
+			);
+
+		log.info("is it a cat? " + catnotcat);
 	}
 
 }
