@@ -20,9 +20,12 @@
         <azure.version>2.1.2</azure.version>
     </properties>
     <dependencies>
+
+
         <!--
         NB: we have to bring this in
         -->
+
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
@@ -35,7 +38,11 @@
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-servicebus-spring-boot-starter</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>applicationinsights-spring-boot-starter</artifactId>
+            <version>1.1.1</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>

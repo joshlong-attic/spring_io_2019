@@ -6,6 +6,7 @@ import com.microsoft.azure.spring.data.cosmosdb.repository.DocumentDbRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,10 +17,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -31,19 +35,22 @@ public class AzureApplication {
 	}
 }
 
+@RestController
+class GreetingRestController {
+
+	@GetMapping("/greetings/{name}")
+	Map<String, Object> greet(@PathVariable String name) {
+		return Collections.singletonMap("greeting", "Hello " + name + "!");
+	}
+}
+
 @Log4j2
 @Component
+@RequiredArgsConstructor
 class ServiceBusDemo {
 
 	private final ITopicClient iTopicClient;
 	private final ISubscriptionClient iSubscriptionClient;
-
-	ServiceBusDemo(
-		ITopicClient iTopicClient,
-		ISubscriptionClient iSubscriptionClient) {
-		this.iTopicClient = iTopicClient;
-		this.iSubscriptionClient = iSubscriptionClient;
-	}
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void demo() throws Exception {
@@ -68,39 +75,6 @@ class ServiceBusDemo {
 
 	}
 }
-
-@Component
-@Log4j2
-class ObjectStorageServiceDemo {
-
-	/*private final com.microsoft.azure.storage.GeneratedStorageClient storageClient;
-	private final Resource resource;
-	private final CloudBlobContainer files;
-
-	ObjectStorageServiceDemo(
-		CloudStorageAccount csa,
-		@Value("classpath:/cat.jpg") Resource cat) throws URISyntaxException, StorageException {
-		this.resource = cat;
-		this.cloudStorageAccount = csa;
-		this.files = this.cloudStorageAccount
-			.createCloudBlobClient()
-			.getContainerReference("files");
-
-	}
-
-	@EventListener(ApplicationReadyEvent.class)
-	public void demo() throws Exception {
-
-		CloudBlockBlob blockBlobReference = this.files.getBlockBlobReference("cat-" + UUID.randomUUID().toString() + ".jpg");
-		try (InputStream in = this.resource.getInputStream()) {
-			blockBlobReference.upload(in, this.resource.contentLength());
-			log.info("uploaded blockblob to " + blockBlobReference.getStorageUri());
-		}
-
-	}*/
-
-}
-
 
 
 @Log4j2
