@@ -97,7 +97,6 @@ class Producer {
 	public void process() throws Exception {
 
 		try (Stream<String> stream = Files.lines(Paths.get(moviesFile.getURI()))) {
-
 			stream.forEach(s -> {
 				Movie movie = Parser.parseMovie(s);
 				log.info("sending " + movie.getMovieId() + " for movie " + movie.toString() + " to " + MOVIES_TOPIC);
@@ -107,7 +106,6 @@ class Producer {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		Random ran = new Random();
 		while (true) {
 			int movieId = ran.nextInt(920) + 1;
@@ -150,7 +148,6 @@ class Parser {
 		movie.setTitle(title);
 		movie.setReleaseYear(Integer.parseInt(releaseYear));
 		movie.setCountry(country);
-		//movie.setRating(Float.parseFloat(rating));
 		movie.setGenres(Parser.parseArray(genres));
 		movie.setActors(Parser.parseArray(actors));
 		movie.setDirectors(Parser.parseArray(directors));

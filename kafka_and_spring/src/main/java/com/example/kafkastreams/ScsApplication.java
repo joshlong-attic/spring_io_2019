@@ -64,8 +64,8 @@ interface Bindings {
 @Component
 class RatingsAverager {
 
-  @SendTo(Bindings.AVG_RATINGS)
   @StreamListener
+  @SendTo(Bindings.AVG_RATINGS)
   KStream<Long, Double> averageRatingsFor(@Input(Bindings.RATINGS) KStream<Long, Rating> ratings) {
     KGroupedStream<Long, Double> ratingsGrouped =
         ratings
