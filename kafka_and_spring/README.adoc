@@ -79,8 +79,8 @@ Add the following to your Maven repositories:
 === Demo
 
 ----
-cnfl destroy
-cnfl start schema-registry
+confluent destroy
+confluent start schema-registry
 ----
 
 . Start KafkaBasicsApplication

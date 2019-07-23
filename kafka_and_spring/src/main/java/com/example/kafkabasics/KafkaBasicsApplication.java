@@ -94,11 +94,13 @@ class Producer {
 	private Resource moviesFile;
 
 	@EventListener(ApplicationReadyEvent.class)
-	public void process() {
+	public void process() throws Exception {
+
 		try (Stream<String> stream = Files.lines(Paths.get(moviesFile.getURI()))) {
 
 			stream.forEach(s -> {
-				final Movie movie = Parser.parseMovie(s);
+				Movie movie = Parser.parseMovie(s);
+				log.info("sending " + movie.getMovieId() + " for movie " + movie.toString() + " to " + MOVIES_TOPIC);
 				movieTemplate.send(MOVIES_TOPIC, movie.getMovieId(), movie);
 			});
 		}
@@ -111,7 +113,8 @@ class Producer {
 			int movieId = ran.nextInt(920) + 1;
 			int rating = 5 + ran.nextInt(6);
 			Rating rat = new Rating((long) movieId, (double) rating);
-			log.debug(rat.toString());
+			log.info(rat.toString());
+			Thread.sleep(1_000);
 			this.ratingTemplate.send(KafkaBasicsApplication.RATINGS_TOPIC, rat.getMovieId(), rat);
 		}
 	}
